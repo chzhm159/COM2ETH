@@ -12,7 +12,6 @@ namespace com2eth {
             AppCfg appcfg = AppCfg.Inst;
             string env = AppCfg.GetString("env");
             Console.WriteLine("Hello, World!");
-            Console.WriteLine("Hello, ChenLaoban!");
         }
     }
     class ChatSession : TcpSession {

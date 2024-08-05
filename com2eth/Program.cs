@@ -1,4 +1,5 @@
 ﻿using com2eth.serialport;
+using com2eth.serialport.Codec;
 using NetCoreServer;
 using System.Net;
 using System.Net.Sockets;
@@ -13,7 +14,21 @@ namespace com2eth {
             string env = AppCfg.GetString("env");
             Console.WriteLine("Hello, World!");
         }
+
+        static void Demo() {
+            NetSerialPort netSerialPort = new NetSerialPort();
+            netSerialPort.Config();
+            netSerialPort.DataReceived += DataHandler;
+            bool suc =netSerialPort.Open();
+
+
+        }
+
+        private static void DataHandler(object? sender, IFrame e) {
+            
+        }
     }
+    
     class ChatSession : TcpSession {
         public ChatSession(TcpServer server) : base(server) { }
 

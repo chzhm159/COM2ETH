@@ -44,15 +44,23 @@ namespace com2eth.serialport
         internal event EventHandler<SerialPinChangedEventArgs> PinChanged;
 
         internal SerialPort() {
-            com = new SerialPortStream();
+            
+        }
+        internal void Config(string com,int baudRate,string parity,int dataBits,string stopBits) {
+            this.PortName = com;
+            this.BaudRate = baudRate;
+            this.Parity = parity;
+            this.DataBits = dataBits;
+            this.StopBits = stopBits;
         }
 
-
-        internal SerialPortStream GetSerialPortStream() {
-            return this.com;
-        }
+        //internal SerialPortStream GetSerialPortStream() {
+        //    return this.com;
+        //}
         internal bool Open() {
             try {
+
+                com = new SerialPortStream();
                 com.PortName = this.PortName;
                 com.BaudRate = this.BaudRate;
 
@@ -65,24 +73,53 @@ namespace com2eth.serialport
                 com.Open();
                 return true;
             } catch (Exception ex) {
-                log.ErrorFormat("串口: [{0}] 打开失败! \r\n {1},{2}", this.PortName, ex.Message, ex.StackTrace);
+                log.ErrorFormat("COM:[{0}] 打开失败! \r\n {1},{2}", this.PortName, ex.Message, ex.StackTrace);
                 return false;
             }
 
         }
 
         internal void DataReceivedHandler(object? sender, RJCP.IO.Ports.SerialDataReceivedEventArgs args) {
-            log.InfoFormat("收到数据:{0}", args.ToString());
+            log.InfoFormat("收到数据:{0},{1}",sender, args.ToString());
+            this.DataReceived?.Invoke(this, args);
+
         }
         internal void ErrorReceivedHandler(object? sender, RJCP.IO.Ports.SerialErrorReceivedEventArgs args) {
             log.InfoFormat("数据失败:{0}", args.ToString());
+            this.ErrorReceived?.Invoke(this, args);
         }
         internal void PinChangedHandler(object? sender, RJCP.IO.Ports.SerialPinChangedEventArgs args) {
             log.InfoFormat("PinChanged事件:{0}", args.ToString());
+            this.PinChanged?.Invoke(this, args);
         }
         internal void Close() {
-            com.Close();
+            try {
+                com.Close();
+                com.Dispose();
+                com = null;
+            }catch(Exception ex) {
+                log.ErrorFormat("COM[{0}],关闭异常:{1},{2}",this.PortName,ex.Message,ex.StackTrace);
+            }
         }
+
+
+        internal bool WriteLine(string msg) {
+            if (com == null || !com.CanWrite) {
+                return false;
+            }
+            com.WriteLine(msg);
+            return true;
+        }
+        internal bool Write(byte[] msg) {
+            if (com == null || !com.CanWrite) {
+                return false;
+            }
+            com.Write(msg);            ;
+            return true;
+        }
+
+
+        #region 工具函数
 
         private RJCP.IO.Ports.Parity MaperParity(string parity) {
             string pstr = parity.ToLower();
@@ -125,20 +162,6 @@ namespace com2eth.serialport
             }
             return s;
         }
-
-        internal bool WriteLine(string msg) {
-            if (com == null || !com.CanWrite) {
-                return false;
-            }
-            com.WriteLine(msg);
-            return true;
-        }
-        internal bool Write(byte[] msg) {
-            if (com == null || !com.CanWrite) {
-                return false;
-            }
-            com.Write(msg);            ;
-            return true;
-        }
+        #endregion
     }
 }

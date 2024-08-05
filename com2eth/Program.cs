@@ -9,18 +9,21 @@ namespace com2eth {
     internal class Program {
         static void Main(string[] args) {
             log4net.Config.XmlConfigurator.Configure(new FileInfo("config/log4net.config"));
-            NetSerialPort netComd = new NetSerialPort();
-            AppCfg appcfg = AppCfg.Inst;
-            string env = AppCfg.GetString("env");
+            Demo();
             Console.WriteLine("Hello, World!");
+            while (true) {
+                var name = Console.ReadLine();
+            }
+
         }
 
         static void Demo() {
-            NetSerialPort netSerialPort = new NetSerialPort();
-            netSerialPort.Config();
-            netSerialPort.DataReceived += DataHandler;
-            bool suc =netSerialPort.Open();
-
+            Task.Run(() => {
+                NetSerialPort netSerialPort = new NetSerialPort();
+                netSerialPort.Config();
+                netSerialPort.DataReceived += DataHandler;
+                bool suc = netSerialPort.Open();
+            });
 
         }
 

@@ -46,6 +46,15 @@ namespace com2eth.serialport {
                 return v;
             }
         }
+        public static float GetFloat(string key, int defaultValue = -1) {
+            float v = cfgRoot.GetValue<float>(key);
+            if (v == 0) {
+                return defaultValue;
+            }
+            else {
+                return v;
+            }
+        }
 
     }
 }

@@ -10,21 +10,33 @@ namespace com2eth.serialport {
     /// </summary>
     public class NetSerialPort {
         private static readonly ILog log = LogManager.GetLogger(typeof(NetSerialPort));
-        public event EventHandler<IFrame> DataReceived;
+        //public event EventHandler<IFrame> DataReceived;
+        SerialPort serialPort;
         public NetSerialPort() {
             
         }
         public void Config() {
             // 1. 设置模式
             // 2. 
+            serialPort = new SerialPort();
+            serialPort.Config("COM1", 9600, "none", 8, "2");
+            serialPort.DataReceived += DataReceivedHandler;
+        }
+        public void DataReceivedHandler(Object sender, SerialDataReceivedEventArgs args) {
+            SerialPort? com = sender as SerialPort;
+            if (com != null) {
+                com.WriteLine("hello world");
+            }
         }
         public bool Open(bool retry = true) {
-            return false;
+            bool suc = serialPort.Open();
+            log.InfoFormat("串口开启状态:{0}",suc);
+            return suc;
         }
         private void OnDataReceived(IFrame data) {
-            if (DataReceived != null) {
-                DataReceived(this, data);
-            }
+            //if (DataReceived != null) {
+            //    DataReceived(this, data);
+            //}
         }
         public bool Write(byte[] data) {
             // 

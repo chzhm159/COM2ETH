@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using EthSerialPort;
+using log4net;
 using RJCP.IO.Ports;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace com2eth.serialport
 {
-    internal class SerialPort
+    internal class SerialPort: IPipeline
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(NetSerialPort));
         /// <summary>
@@ -36,30 +37,43 @@ namespace com2eth.serialport
         /// 停止位
         /// </summary>
         internal string StopBits { get; private set; }
-
-        internal event EventHandler<SerialDataReceivedEventArgs> DataReceived;
-
-        internal event EventHandler<SerialErrorReceivedEventArgs> ErrorReceived;
-
-        internal event EventHandler<SerialPinChangedEventArgs> PinChanged;
-
-        internal SerialPort() {
+        string IPipeline.IPipelneName {
+            get => GetName();
+            set => SetName(value);
+        }
+        private string GetName() {
+            return "";
+        }
+        private void SetName(string name) {
             
         }
-        internal void Config(string com,int baudRate,string parity,int dataBits,string stopBits) {
-            this.PortName = com;
-            this.BaudRate = baudRate;
-            this.Parity = parity;
-            this.DataBits = dataBits;
-            this.StopBits = stopBits;
+        internal event EventHandler<SerialDataReceivedEventArgs>? DataHandler;
+
+        internal event EventHandler<SerialErrorReceivedEventArgs>? ErrorHander;
+
+        internal event EventHandler<SerialPinChangedEventArgs>? PinChangedHandler;
+
+        
+        private int _state = 0;
+        void IPipeline.Config(NetSerialPortOptions opt) {
+            this.PortName = opt.PortName;
+            this.BaudRate = opt.BaudRate;
+            this.Parity = opt.Parity;
+            this.DataBits = opt.DataBits;
+            this.StopBits = opt.StopBits;
+            _state = 1;
+        }
+        internal SerialPortStream GetComStream() {
+            return com;
+        }
+        void IPipeline.Close() {
+
         }
 
-        //internal SerialPortStream GetSerialPortStream() {
-        //    return this.com;
-        //}
-        internal bool Open() {
+        bool IPipeline.Open() {
+            
             try {
-
+                
                 com = new SerialPortStream();
                 com.PortName = this.PortName;
                 com.BaudRate = this.BaudRate;
@@ -67,8 +81,8 @@ namespace com2eth.serialport
                 com.Parity = MaperParity(this.Parity);
                 com.DataBits = this.DataBits;
                 com.StopBits = MaperStopBits(this.StopBits);
-                com.DataReceived += DataReceivedHandler;
-                com.ErrorReceived += ErrorReceivedHandler;
+                com.DataReceived += DataHandler;
+                com.ErrorReceived += ErrorHander;
                 com.PinChanged += PinChangedHandler;
                 com.Open();
                 return true;
@@ -79,19 +93,7 @@ namespace com2eth.serialport
 
         }
 
-        internal void DataReceivedHandler(object? sender, RJCP.IO.Ports.SerialDataReceivedEventArgs args) {
-            log.InfoFormat("收到数据:{0},{1}",sender, args.ToString());
-            this.DataReceived?.Invoke(this, args);
-
-        }
-        internal void ErrorReceivedHandler(object? sender, RJCP.IO.Ports.SerialErrorReceivedEventArgs args) {
-            log.InfoFormat("数据失败:{0}", args.ToString());
-            this.ErrorReceived?.Invoke(this, args);
-        }
-        internal void PinChangedHandler(object? sender, RJCP.IO.Ports.SerialPinChangedEventArgs args) {
-            log.InfoFormat("PinChanged事件:{0}", args.ToString());
-            this.PinChanged?.Invoke(this, args);
-        }
+        
         internal void Close() {
             try {
                 com.Close();
@@ -110,7 +112,7 @@ namespace com2eth.serialport
             com.WriteLine(msg);
             return true;
         }
-        internal bool Write(byte[] msg) {
+        bool IPipeline.Write(byte[] msg) {
             if (com == null || !com.CanWrite) {
                 return false;
             }
@@ -162,6 +164,9 @@ namespace com2eth.serialport
             }
             return s;
         }
+
+
+        
         #endregion
     }
 }

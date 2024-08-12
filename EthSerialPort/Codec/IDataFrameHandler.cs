@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace com2eth.serialport.Codec
 {
-    internal interface IDataFrameHandler
+    public interface IDataFrameHandler
     {
-        internal byte[] Decode(byte[] data);
+
+        public List<IFrame>? Decode(byte[] data);
 
     }
 }

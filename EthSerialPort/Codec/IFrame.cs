@@ -8,6 +8,8 @@ namespace com2eth.serialport.Codec
 {
     public class IFrame
     {
-        public byte[] Raw {  get; set; }    
+        public byte[]? RawBytes {  get; set; }    
+        public string? String {  get; set; }    
+        
     }
 }

@@ -1,5 +1,7 @@
-﻿using com2eth.serialport;
+﻿using com2eth.connector;
+using com2eth.serialport;
 using com2eth.serialport.Codec;
+using com2eth.server;
 using EthSerialPort;
 using EthSerialPort.Codec;
 using log4net;
@@ -15,13 +17,21 @@ namespace com2eth {
         static void Main(string[] args) {
             log4net.Config.XmlConfigurator.Configure(new FileInfo("config/log4net.config"));
 
-            LineBaseDecoderTest();
-            Demo();
-            while (true) {
-                var name = Console.ReadLine();
-                
-            }
-
+            Bootstrap bootstrap = new Bootstrap();
+            bool started = bootstrap.Boot(args);
+            log.InfoFormat("启动完成,匹配到服务:{0}",started);
+            
+            //LineBaseDecoderTest();
+            //Demo();
+            //while (true) {
+            //    var name = Console.ReadLine();                
+            //}
+        }
+        private static void Start(string[] args) {
+            //IPAddress addr = IPAddress.Parse("127.0.0.1");
+            //int port = 6565;
+            //SerialPortCfg spc = new SerialPortCfg();
+            //Com2TcpServer comServer = new Com2TcpServer(addr, port,spc);
         }
         static void LineBaseDecoderTest() {
             LineBasedFrame decoder = new LineBasedFrame("\r\n");
@@ -48,8 +58,6 @@ namespace com2eth {
         static void Demo() {
             Task.Run(() => {
                 LineBasedFrame decoder = new LineBasedFrame("\r\n");
-
-
 
                 NetSerialPort netSerialPort = new NetSerialPort("com", decoder);
                 NetSerialPortOptions opt =new NetSerialPortOptions();

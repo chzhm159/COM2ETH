@@ -4,12 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace com2eth.server
+namespace com2eth.connector
 {
-    /// <summary>
-    /// 提供 Tcp Server. 
-    /// </summary>
-    internal class Com2TcpServer
+    internal interface IConnector
     {
+        internal EndpointType[] GetEndpointType() ;
     }
 }

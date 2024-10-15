@@ -14,18 +14,22 @@ using System.Text;
 namespace com2eth {
     internal class Program {
         private static readonly ILog log = LogManager.GetLogger(typeof(Program));
+        private readonly static ManualResetEvent _shutdownBlock = new ManualResetEvent(false);
         static void Main(string[] args) {
             log4net.Config.XmlConfigurator.Configure(new FileInfo("config/log4net.config"));
 
             Bootstrap bootstrap = new Bootstrap();
-            bool started = bootstrap.Boot(args);
-            log.InfoFormat("启动完成,匹配到服务:{0}",started);
-            
-            //LineBaseDecoderTest();
-            //Demo();
-            //while (true) {
-            //    var name = Console.ReadLine();                
-            //}
+            bootstrap.BootAsync(args).ContinueWith(st =>{
+                log.InfoFormat("启动完成,匹配到服务:{0}", st.Result);
+                if (!st.Result) {
+                    _shutdownBlock.Set();
+                }
+            });
+            _shutdownBlock.WaitOne();
+        }
+        private static void Console_CancelPressed(object sender, ConsoleCancelEventArgs e) { 
+            e.Cancel = true;
+            _shutdownBlock.Set();
         }
         private static void Start(string[] args) {
             //IPAddress addr = IPAddress.Parse("127.0.0.1");

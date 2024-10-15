@@ -19,19 +19,18 @@ namespace com2eth.connector
     internal class ComAndTcpServerConnector
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(ComAndTcpServerConnector));
-        private TcpServerChannel tcpServerChannel;
-        private NetSerialPort comChannel;
-        EndpointEntity endpoint_a;
-        EndpointEntity endpoint_b;
+        private TcpServerChannel? tcpServerChannel;
+        private NetSerialPort? comChannel;
+        EndpointEntity? endpoint_a;
+        EndpointEntity? endpoint_b;
         public readonly static EndpointType[] Endpoints = new EndpointType[] { EndpointType.TCP_SERVER, EndpointType.SERIALPORT };
 
-        // BindUtils bindUtils;
         public ComAndTcpServerConnector() {
             Config();
         }
 
         private void Config() {
-            // bindUtils = BindUtils.Inst;
+            // TODO 可以从配置文件加载某些配置
         }
 
         public void SetEndpoint(EndpointEntity epA, EndpointEntity epB) {
@@ -69,10 +68,9 @@ namespace com2eth.connector
             string ip = "127.0.0.1";
             IPAddress addr = IPAddress.Parse(ip);
             tcpServerChannel = new TcpServerChannel(addr, cfg.port);
-            tcpServerChannel.
+            tcpServerChannel.DataReceived += TcpDataHandler;
             started = tcpServerChannel.Start();
-            log.InfoFormat("TCP_Server <-> COM 口适配器: Tcp Server 已启动. IP:{0},Port:{1}", ip, cfg.port);
-            
+            log.InfoFormat("TCP_Server <-> COM 口适配器: Tcp Server 已启动. IP:{0},Port:{1},suc:{2}", ip, cfg.port, started);            
             return started;
         }
 
@@ -81,10 +79,30 @@ namespace com2eth.connector
             LineBasedFrame decoder = new LineBasedFrame("\r\n");
             comChannel = new NetSerialPort("com", decoder);
             NetSerialPortOptions opt = new NetSerialPortOptions();
+            opt.PortName = cfg.com;
+            opt.BaudRate = cfg.baudrate;
+            opt.Parity = cfg.parity;
+            opt.DataBits = cfg.databits;
+            opt.StopBits = cfg.stopbits;
             comChannel.Config(opt);
             comChannel.DataReceived += ComDataHandler;
             bool suc = comChannel.Open();
+            log.InfoFormat("TCP_Server <-> COM 口适配器: COM启动. COM:{0},suc:{1}", opt.PortName,suc);
             return started;
+        }
+
+        private void TcpDataHandler(object? sender,TcpMsg msg) {
+            C2TSession? client = sender as C2TSession;
+            
+            if (msg.buffer != null) {
+                byte[] data = msg.buffer.Where(b => {
+                    return (b != 0x0);
+                }).ToArray();
+                if (data.Length > 0) {
+                    log.DebugFormat("tcp -> com data:{0}",data.Length);
+                    comChannel?.Write(data);
+                }
+            }
         }
 
         /// <summary>
@@ -93,8 +111,15 @@ namespace com2eth.connector
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void ComDataHandler(object? sender, IFrame e) {
-            // 收到
+            byte[]? data = e.RawBytes;
+            tcpServerChannel?.Multicast(data);
         }
+    }
+    internal class RequestWapper {
+
+    }
+    internal class ResponseWapper
+    {
 
     }
 }

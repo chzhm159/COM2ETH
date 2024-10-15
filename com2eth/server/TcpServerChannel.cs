@@ -23,11 +23,7 @@ namespace com2eth.server
     {
         private static readonly ILog log = LogManager.GetLogger(typeof(TcpServerChannel));
         
-        
-
-        // SerialPortCfg comCfg;
-        public TcpServerChannel(IPAddress address, int port) : base(address, port) {
-            // this.comCfg =  spc;
+        public TcpServerChannel(IPAddress address, int port) : base(address, port) {        
             this.OptionNoDelay = true;
         }
 
@@ -35,7 +31,7 @@ namespace com2eth.server
 
         public override bool Start() {
             bool tcpStartSuc = base.Start();
-
+            log.InfoFormat("TCP Server 启动 suc:{0}", tcpStartSuc);
             return tcpStartSuc;
         }
         protected override void OnStarting() {
@@ -45,27 +41,33 @@ namespace com2eth.server
         /// <summary>
         /// Handle server started notification
         /// </summary>
-        protected override void OnStarted() { 
-        
+        protected override void OnStarted() {
+            log.InfoFormat("TCP Server 已启动 ip:{0},prot:{1}", this.Address.Normalize(),this.Port);
         }
 
         /// <summary>
         /// Handle server stopping notification
         /// </summary>
-        protected override void OnStopping() { }
+        protected override void OnStopping() {
+            log.InfoFormat("TCP Server 停止中... ip:{0},prot:{1}", this.Address.Normalize(), this.Port);
+        }
         /// <summary>
         /// Handle server stopped notification
         /// </summary>
-        protected override void OnStopped() { }
+        protected override void OnStopped() {
+            log.InfoFormat("TCP Server 已停止... ip:{0},prot:{1}", this.Address.Normalize(), this.Port);
+        }
 
         protected override TcpSession CreateSession() {
-            return new C2TSession(this);
+            C2TSession sess = new C2TSession(this);
+            sess.DataReceived += this.DataReceived;
+            return sess;
         }
 
         protected override void OnError(SocketError error) {
-            log.ErrorFormat("TCP server caught an error with code {0}",error.ToString());
+            log.ErrorFormat("TCP Server 出现异常 {0}",error.ToString());
         }
-        public event EventHandler<IFrame>? DataReceived;
+        public event EventHandler<TcpMsg>? DataReceived;
     }
     
 }

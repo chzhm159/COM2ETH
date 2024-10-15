@@ -13,20 +13,6 @@
         "databits": 8,
         "stopbits": "2"
       }
-    },
-    {
-      "endpoint_a": {
-        "type": "tcp_server",
-        "port": 9002
-      },
-      "endpoint_b": {
-        "type": "serial_port",
-        "com": "COM2",
-        "baudrate": 115200,
-        "parity": "none",
-        "databits": 8,
-        "stopbits": "2"
-      }
     }
   ]
 

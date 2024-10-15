@@ -16,7 +16,7 @@ namespace com2eth.serialport {
     /// </summary>
     public class NetSerialPort {
         private static readonly ILog log = LogManager.GetLogger(typeof(NetSerialPort));
-        
+        private NetSerialPortOptions? cfg;
         /// <summary>
         /// 链接成功建立时被调用
         /// </summary>
@@ -59,11 +59,12 @@ namespace com2eth.serialport {
         }
 
         public void Config(NetSerialPortOptions opt) {
+            cfg = opt;
             pipe.Config(opt);
         }
-        private int _state=0;
+        
         public bool Open(bool retry = true) {
-            if (_state == 0) {
+            if (cfg == null) {
                 log.ErrorFormat("请先调用 .Config(opt) 方法. 传入必要的配置参数 ");
                 return false;
             }
@@ -80,11 +81,11 @@ namespace com2eth.serialport {
         }
         internal void ComDataHandler(object? sender, RJCP.IO.Ports.SerialDataReceivedEventArgs args) {            
             log.InfoFormat("COM口 收到数据:{0},{1}", sender, args.ToString());
-            SerialPort? com = sender as SerialPort;
-            if (com == null ) { 
+            SerialPortStream? stream = sender as SerialPortStream;
+            if (stream == null ) { 
                 return; 
             }
-            SerialPortStream stream = com.GetComStream();
+            // SerialPortStream stream = com.GetComStream();
             int bToRead = stream.BytesToRead;            
             if (!stream.CanRead || bToRead < 1) {
                 return;

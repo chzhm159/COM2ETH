@@ -21,25 +21,29 @@ namespace com2eth
             // TODO 这里后续重构吧.先硬编码
             Connectors.Add(typeof(ComAndTcpServerConnector));
         }
-        internal bool Boot(string[] args) {
-            bool hasService = false;
-            // 加载配置文件,判断 bind 类型.
-            BindUtils utils = BindUtils.Inst;
-            utils.Load();
-            if (utils.Bundles == null || utils.Bundles.bundles==null) {
-                log.Error("未能加载Bind信息!");
-                return hasService;
-            }
-            string tcpServer = StringEnum.GetStringValue(EndpointType.TCP_SERVER);
-            string serialPort = StringEnum.GetStringValue(EndpointType.SERIALPORT);
-            
-            utils.Bundles.bundles.ForEach(bind => {
-                bool matched = MatchHandler(bind);
-                if (!hasService && matched) {
-                    hasService = true;
+        internal Task<bool> BootAsync(string[] args) {
+            return Task.Run(Task<bool>? () => {
+
+                bool hasService = false;
+                // 加载配置文件,判断 bind 类型.
+                BindUtils utils = BindUtils.Inst;
+                utils.Load();
+                if (utils.Bundles == null || utils.Bundles.bundles == null) {
+                    log.Error("未能加载Bind信息!");
+                    return Task.FromResult(hasService) ;
                 }
+                string tcpServer = StringEnum.GetStringValue(EndpointType.TCP_SERVER);
+                string serialPort = StringEnum.GetStringValue(EndpointType.SERIALPORT);
+
+                utils.Bundles.bundles.ForEach(bind => {
+                    bool matched = MatchHandler(bind);
+                    if (!hasService && matched) {
+                        hasService = true;
+                    }
+                });
+                return Task.FromResult(hasService);
             });
-            return hasService;
+            
         }
         private bool MatchHandler(EndpointMapper endpoints) {
             bool hasService = false;

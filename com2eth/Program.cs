@@ -31,12 +31,7 @@ namespace com2eth {
             e.Cancel = true;
             _shutdownBlock.Set();
         }
-        private static void Start(string[] args) {
-            //IPAddress addr = IPAddress.Parse("127.0.0.1");
-            //int port = 6565;
-            //SerialPortCfg spc = new SerialPortCfg();
-            //Com2TcpServer comServer = new Com2TcpServer(addr, port,spc);
-        }
+        
         static void LineBaseDecoderTest() {
             LineBasedFrame decoder = new LineBasedFrame("\r\n");
             string str = "abcde\r\n";
@@ -56,68 +51,7 @@ namespace com2eth {
                         log.DebugFormat("收到完整数据包:raw:[{0}], string:[{1}],与预期是否一致:{2}",string.Join("-",f.RawBytes),f.String, matched);
                     });
                 }
-            }
-            
-        }
-        static void Demo() {
-            Task.Run(() => {
-                LineBasedFrame decoder = new LineBasedFrame("\r\n");
-
-                NetSerialPort netSerialPort = new NetSerialPort("com", decoder);
-                NetSerialPortOptions opt =new NetSerialPortOptions();
-                netSerialPort.Config(opt);
-                netSerialPort.DataReceived += DataHandler;
-                bool suc = netSerialPort.Open();
-            });
-
-        }
-
-        private static void DataHandler(object? sender, IFrame e) {
-            
-        }
-    }
-    
-    class ChatSession : TcpSession {
-        public ChatSession(TcpServer server) : base(server) { }
-
-        protected override void OnConnected() {
-            Console.WriteLine($"Chat TCP session with Id {Id} connected!");
-
-            // Send invite message
-            string message = "Hello from TCP chat! Please send a message or '!' to disconnect the client!";
-            SendAsync(message);
-        }
-
-        protected override void OnDisconnected() {
-            Console.WriteLine($"Chat TCP session with Id {Id} disconnected!");
-        }
-
-        protected override void OnReceived(byte[] buffer, long offset, long size) {
-            string message = Encoding.UTF8.GetString(buffer, (int)offset, (int)size);
-            Console.WriteLine("Incoming: " + message);
-
-            // Multicast message to all connected sessions
-            Server.Multicast(message);
-
-            // If the buffer starts with '!' the disconnect the current session
-            if (message == "!")
-                Disconnect();
-        }
-
-        protected override void OnError(SocketError error) {
-            Console.WriteLine($"Chat TCP session caught an error with code {error}");
-        }
-    }
-
-    class ChatServer : TcpServer {
-        public ChatServer(IPAddress address, int port) : base(address, port) { }
-
-        protected override TcpSession CreateSession() {
-            return new ChatSession(this);
-        }
-
-        protected override void OnError(SocketError error) {
-            Console.WriteLine($"Chat TCP server caught an error with code {error}");
-        }
-    }
+            }            
+        }        
+    }    
 }

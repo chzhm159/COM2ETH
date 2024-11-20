@@ -42,8 +42,7 @@ namespace com2eth
                     }
                 });
                 return Task.FromResult(hasService);
-            });
-            
+            });            
         }
         private bool MatchHandler(EndpointMapper endpoints) {
             bool hasService = false;

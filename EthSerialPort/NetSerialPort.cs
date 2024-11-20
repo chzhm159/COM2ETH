@@ -103,9 +103,9 @@ namespace com2eth.serialport {
             }            
         }
         internal void ComErrorHandler(object? sender, RJCP.IO.Ports.SerialErrorReceivedEventArgs args) {
-            log.InfoFormat("COM口 数据失败:{0}", args.ToString());
-            
+            log.InfoFormat("COM口 数据失败:{0}", args.ToString());            
         }
+
         internal void PinChangedHandler(object? sender, RJCP.IO.Ports.SerialPinChangedEventArgs args) {
             log.InfoFormat("COM口 PinChanged事件:{0}", args.ToString());
             

@@ -17,9 +17,9 @@ namespace com2eth.connector
         public static BindUtils Inst => _instance.Value;
         JsonSerializer serializer = new JsonSerializer();
         internal Bundles? Bundles { get; set; }
-        internal Bundles Load() {
+        internal Bundles Load(string fp ) {
             try {
-                using (StreamReader file = File.OpenText("config/binds.json")) {  
+                using (StreamReader file = File.OpenText(fp)) {  
                     serializer.NullValueHandling = NullValueHandling.Ignore;
                     JsonTextReader textReader = new JsonTextReader(file);
                     Bundles = serializer.Deserialize<Bundles>(textReader);
@@ -37,14 +37,22 @@ namespace com2eth.connector
     }
     public class EndpointMapper
     {
+        public string name { get; set; }
+        public string desc { get; set; }
         public EndpointEntity? endpoint_a { get; set; }
         public EndpointEntity? endpoint_b { get; set; }
     }
 
     public class EndpointEntity
     {
+        public string name { get; set; }
+        public string desc { get; set; }
         public string type {  get; set; }
+        public string ip { get; set; } = "127.0.0.1";
         public int port {  get; set; }
+
+        public string addr {  get; set; }
+        
         public string com {  get; set; }
         public string parity {  get; set; }
         public int databits {  get; set; }

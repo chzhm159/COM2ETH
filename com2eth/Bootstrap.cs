@@ -18,6 +18,7 @@ namespace com2eth
             Config();
         }
         internal void Config() {
+            
             // TODO 这里后续重构吧.先硬编码
             Connectors.Add(typeof(ComAndTcpServerConnector));
         }
@@ -27,7 +28,8 @@ namespace com2eth
                 bool hasService = false;
                 // 加载配置文件,判断 bind 类型.
                 BindUtils utils = BindUtils.Inst;
-                utils.Load();
+
+                utils.Load("config/binds.json");
                 if (utils.Bundles == null || utils.Bundles.bundles == null) {
                     log.Error("未能加载Bind信息!");
                     return Task.FromResult(hasService) ;

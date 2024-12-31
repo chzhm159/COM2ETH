@@ -1,11 +1,16 @@
 {
   "bundles": [
     {
+      "name": "TCP转COM",
+      "desc": "测试",
       "endpoint_a": {
+        "name": "TCP Server",
         "type": "tcp_server",
+        
         "port": 9001
       },
       "endpoint_b": {
+        "name": "COM口",
         "type": "serial_port",
         "com": "COM1",
         "baudrate": 115200,

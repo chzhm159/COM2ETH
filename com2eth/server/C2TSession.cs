@@ -48,7 +48,7 @@ namespace com2eth.server
         }
 
         protected override void OnError(SocketError error) {
-            Console.WriteLine($"Chat TCP session caught an error with code {error}");
+            log.Error($"Chat TCP session caught an error with code {error}");
         }
     }
     public class TcpMsg : EventArgs

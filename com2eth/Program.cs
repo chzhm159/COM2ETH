@@ -18,14 +18,19 @@ namespace com2eth {
         static void Main(string[] args) {
             log4net.Config.XmlConfigurator.Configure(new FileInfo("config/log4net.config"));
 
-            Bootstrap bootstrap = new Bootstrap();
-            bootstrap.BootAsync(args).ContinueWith(st =>{
-                log.InfoFormat("启动完成,匹配到服务:{0}", st.Result);
-                if (!st.Result) {
-                    _shutdownBlock.Set();
-                }
-            });
-            _shutdownBlock.WaitOne();
+            //Bootstrap bootstrap = new Bootstrap();
+            //bootstrap.BootAsync(args).ContinueWith(st =>{
+            //    log.InfoFormat("启动完成,匹配到服务:{0}", st.Result);
+            //    if (!st.Result) {
+            //        _shutdownBlock.Set();
+            //    }
+            //});
+            ApplicationConfiguration.Initialize();
+
+            // TestWin win = new TestWin();
+            Main win = new Main();
+            Application.Run(win);
+            // _shutdownBlock.WaitOne();
         }
         private static void Console_CancelPressed(object sender, ConsoleCancelEventArgs e) { 
             e.Cancel = true;

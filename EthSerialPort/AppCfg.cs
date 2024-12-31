@@ -1,12 +1,16 @@
 ﻿using log4net;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Collections.Specialized.BitVector32;
 
 namespace com2eth.serialport {
     public class AppCfg
@@ -46,6 +50,9 @@ namespace com2eth.serialport {
                 return v;
             }
         }
+        // 实现一个将配置信息写会cfgRoot的函数
+       
+
         public static float GetFloat(string key, int defaultValue = -1) {
             float v = cfgRoot.GetValue<float>(key);
             if (v == 0) {
@@ -55,6 +62,29 @@ namespace com2eth.serialport {
                 return v;
             }
         }
+        static JsonSerializer serializer = new JsonSerializer();
+        public static T? ReadJson<T>(string fp) {
+            try {
+                if (!File.Exists(fp)) {
+                    log.ErrorFormat("Json文件:{0}  不存在!,已跳过!", fp);
+                    return default(T);
+                }
+                using (StreamReader file = File.OpenText(fp)) {
 
+                    serializer.NullValueHandling = NullValueHandling.Ignore;
+                    JsonTextReader textReader = new JsonTextReader(file);
+
+                    object? obj = serializer.Deserialize(textReader, typeof(T));
+                    if (obj == null) {
+                        return default(T);
+                    } else {
+                        return (T)obj;
+                    }
+                }
+            } catch (Exception e) {
+                log.ErrorFormat("Json文件[{2}]加载异常: {0},{1}", e.Message, e.StackTrace, fp);
+                return default(T);
+            }
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using log4net;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -86,5 +87,52 @@ namespace com2eth.serialport {
                 return default(T);
             }
         }
+
+        public static bool SaveToFile(string fp,string data) {
+            try {
+                using (FileStream fs = new FileStream(
+                   path: fp,
+                   mode: FileMode.OpenOrCreate,
+                   access: FileAccess.ReadWrite,
+                   share: FileShare.None,
+                   bufferSize: 4096,
+                   useAsync: false)) {
+
+                    var bits = Encoding.UTF8.GetBytes(data);
+                    fs.Seek(0, SeekOrigin.Begin);
+                    fs.SetLength(0);
+                    fs.Write(bits, 0, bits.Length);
+                    fs.Flush();
+                    return true;
+                }
+            } catch(Exception e) {
+                log.ErrorFormat("文件保存异常:[{0}],{1},{2}",fp,e.Message,e.StackTrace);
+                return false;
+            }
+            
+        }
+        static List<string> Parity = new List<string>();
+        public static List<string> GetParity() {
+            if(Parity.Count == 0) {
+                Parity.Add("even");
+                Parity.Add("mark");
+                Parity.Add("none");
+                Parity.Add("odd");
+                Parity.Add("space");
+            }
+            return Parity;
+        }
+        static List<string> Stopbit = new List<string>();
+        public static List<string> GetStopbit() {
+            if(Stopbit.Count == 0) {
+                Stopbit.Add("0");
+                Stopbit.Add("1");
+                Stopbit.Add("1.5");
+                Stopbit.Add("2");
+            }
+            return Stopbit;
+        }
+        
+
     }
 }

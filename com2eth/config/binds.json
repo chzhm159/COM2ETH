@@ -1,12 +1,11 @@
 {
   "bundles": [
-    {
+    {      
       "name": "TCP转COM",
       "desc": "测试",
       "endpoint_a": {
         "name": "TCP Server",
         "type": "tcp_server",
-        
         "port": 9001
       },
       "endpoint_b": {

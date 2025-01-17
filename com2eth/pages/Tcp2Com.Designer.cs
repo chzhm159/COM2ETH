@@ -33,6 +33,8 @@
             a_lb_ip = new Label();
             a_lb_name = new Label();
             pn_B = new Panel();
+            b_cb_stopbit = new ComboBox();
+            b_cb_parity = new ComboBox();
             button1 = new Button();
             b_tb_stopbit = new TextBox();
             b_tb_databit = new TextBox();
@@ -45,7 +47,7 @@
             b_lb_msg = new Label();
             b_lb_baudrate = new Label();
             b_lb_com = new Label();
-            label4 = new Label();
+            b_lb_name = new Label();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -99,6 +101,7 @@
             a_btn_save.TabIndex = 3;
             a_btn_save.Text = "保存";
             a_btn_save.UseVisualStyleBackColor = true;
+            a_btn_save.Click += a_btn_save_Click;
             // 
             // a_tb_port
             // 
@@ -109,7 +112,7 @@
             // 
             // a_tb_ip
             // 
-            a_tb_ip.Location = new Point(104, 37);
+            a_tb_ip.Location = new Point(104, 40);
             a_tb_ip.Name = "a_tb_ip";
             a_tb_ip.Size = new Size(171, 28);
             a_tb_ip.TabIndex = 2;
@@ -133,7 +136,7 @@
             // 
             // a_lb_ip
             // 
-            a_lb_ip.Location = new Point(25, 35);
+            a_lb_ip.Location = new Point(25, 38);
             a_lb_ip.Name = "a_lb_ip";
             a_lb_ip.Size = new Size(73, 30);
             a_lb_ip.TabIndex = 1;
@@ -152,6 +155,8 @@
             // 
             // pn_B
             // 
+            pn_B.Controls.Add(b_cb_stopbit);
+            pn_B.Controls.Add(b_cb_parity);
             pn_B.Controls.Add(button1);
             pn_B.Controls.Add(b_tb_stopbit);
             pn_B.Controls.Add(b_tb_databit);
@@ -164,7 +169,7 @@
             pn_B.Controls.Add(b_lb_msg);
             pn_B.Controls.Add(b_lb_baudrate);
             pn_B.Controls.Add(b_lb_com);
-            pn_B.Controls.Add(label4);
+            pn_B.Controls.Add(b_lb_name);
             pn_B.Dock = DockStyle.Fill;
             pn_B.Location = new Point(0, 0);
             pn_B.Margin = new Padding(4);
@@ -172,7 +177,24 @@
             pn_B.Padding = new Padding(4);
             pn_B.Size = new Size(402, 398);
             pn_B.TabIndex = 0;
-            pn_B.Paint += pn_B_Paint;
+            // 
+            // b_cb_stopbit
+            // 
+            b_cb_stopbit.DropDownStyle = ComboBoxStyle.DropDownList;
+            b_cb_stopbit.FormattingEnabled = true;
+            b_cb_stopbit.Location = new Point(174, 229);
+            b_cb_stopbit.Name = "b_cb_stopbit";
+            b_cb_stopbit.Size = new Size(107, 29);
+            b_cb_stopbit.TabIndex = 11;
+            // 
+            // b_cb_parity
+            // 
+            b_cb_parity.DropDownStyle = ComboBoxStyle.DropDownList;
+            b_cb_parity.FormattingEnabled = true;
+            b_cb_parity.Location = new Point(174, 137);
+            b_cb_parity.Name = "b_cb_parity";
+            b_cb_parity.Size = new Size(107, 29);
+            b_cb_parity.TabIndex = 11;
             // 
             // button1
             // 
@@ -182,10 +204,11 @@
             button1.TabIndex = 10;
             button1.Text = "保存";
             button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
             // 
             // b_tb_stopbit
             // 
-            b_tb_stopbit.Location = new Point(174, 229);
+            b_tb_stopbit.Location = new Point(174, 351);
             b_tb_stopbit.Name = "b_tb_stopbit";
             b_tb_stopbit.Size = new Size(107, 28);
             b_tb_stopbit.TabIndex = 8;
@@ -199,7 +222,7 @@
             // 
             // b_tb_parity
             // 
-            b_tb_parity.Location = new Point(174, 135);
+            b_tb_parity.Location = new Point(27, 351);
             b_tb_parity.Name = "b_tb_parity";
             b_tb_parity.Size = new Size(107, 28);
             b_tb_parity.TabIndex = 8;
@@ -215,7 +238,7 @@
             // 
             // b_tb_baudrate
             // 
-            b_tb_baudrate.Location = new Point(174, 89);
+            b_tb_baudrate.Location = new Point(174, 85);
             b_tb_baudrate.Name = "b_tb_baudrate";
             b_tb_baudrate.Size = new Size(107, 28);
             b_tb_baudrate.TabIndex = 8;
@@ -231,7 +254,7 @@
             // 
             // b_tb_com
             // 
-            b_tb_com.Location = new Point(174, 37);
+            b_tb_com.Location = new Point(174, 38);
             b_tb_com.Name = "b_tb_com";
             b_tb_com.Size = new Size(107, 28);
             b_tb_com.TabIndex = 9;
@@ -264,22 +287,22 @@
             // 
             // b_lb_com
             // 
-            b_lb_com.Location = new Point(68, 37);
+            b_lb_com.Location = new Point(68, 38);
             b_lb_com.Name = "b_lb_com";
             b_lb_com.Size = new Size(100, 30);
             b_lb_com.TabIndex = 7;
             b_lb_com.Text = "COM口:";
             b_lb_com.TextAlign = ContentAlignment.MiddleLeft;
             // 
-            // label4
+            // b_lb_name
             // 
-            label4.Dock = DockStyle.Top;
-            label4.Location = new Point(4, 4);
-            label4.Margin = new Padding(4, 0, 4, 0);
-            label4.Name = "label4";
-            label4.Size = new Size(394, 30);
-            label4.TabIndex = 4;
-            label4.TextAlign = ContentAlignment.MiddleCenter;
+            b_lb_name.Dock = DockStyle.Top;
+            b_lb_name.Location = new Point(4, 4);
+            b_lb_name.Margin = new Padding(4, 0, 4, 0);
+            b_lb_name.Name = "b_lb_name";
+            b_lb_name.Size = new Size(394, 30);
+            b_lb_name.TabIndex = 4;
+            b_lb_name.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // Tcp2Com
             // 
@@ -320,12 +343,14 @@
         private Label b_lb_msg;
         private Label b_lb_baudrate;
         private Label b_lb_com;
-        private Label label4;
+        private Label b_lb_name;
         private TextBox b_tb_databit;
         private TextBox b_tb_parity;
         private Label label3;
         private Label label2;
         private TextBox b_tb_stopbit;
         private Label label5;
+        private ComboBox b_cb_parity;
+        private ComboBox b_cb_stopbit;
     }
 }

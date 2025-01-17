@@ -39,7 +39,7 @@
             m_pn_center = new Panel();
             pn_top = new FlowLayoutPanel();
             tools_btn_new = new Button();
-            tools_btn_save = new Button();
+            tools_btn_del = new Button();
             app_menubar.SuspendLayout();
             pn_left.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)app_splitContainer).BeginInit();
@@ -173,7 +173,7 @@
             // 
             pn_top.BorderStyle = BorderStyle.FixedSingle;
             pn_top.Controls.Add(tools_btn_new);
-            pn_top.Controls.Add(tools_btn_save);
+            pn_top.Controls.Add(tools_btn_del);
             pn_top.Dock = DockStyle.Top;
             pn_top.Location = new Point(0, 29);
             pn_top.Name = "pn_top";
@@ -192,14 +192,15 @@
             tools_btn_new.UseVisualStyleBackColor = true;
             tools_btn_new.Click += tools_btn_new_Click;
             // 
-            // tools_btn_save
+            // tools_btn_del
             // 
-            tools_btn_save.Location = new Point(84, 6);
-            tools_btn_save.Name = "tools_btn_save";
-            tools_btn_save.Size = new Size(60, 30);
-            tools_btn_save.TabIndex = 0;
-            tools_btn_save.Text = "保存";
-            tools_btn_save.UseVisualStyleBackColor = true;
+            tools_btn_del.Location = new Point(84, 6);
+            tools_btn_del.Name = "tools_btn_del";
+            tools_btn_del.Size = new Size(60, 30);
+            tools_btn_del.TabIndex = 0;
+            tools_btn_del.Text = "删除";
+            tools_btn_del.UseVisualStyleBackColor = true;
+            tools_btn_del.Click += tools_btn_del_Click;
             // 
             // Main
             // 
@@ -211,10 +212,12 @@
             Controls.Add(panel4);
             Controls.Add(app_menubar);
             Font = new Font("Microsoft YaHei UI", 12F);
+            FormBorderStyle = FormBorderStyle.FixedToolWindow;
             Icon = (Icon)resources.GetObject("$this.Icon");
             MainMenuStrip = app_menubar;
             Margin = new Padding(4);
             Name = "Main";
+            FormClosing += Main_FormClosing;
             Load += Main_Load;
             app_menubar.ResumeLayout(false);
             app_menubar.PerformLayout();
@@ -243,7 +246,7 @@
         private RichTextBox app_msg;
         private TreeView bundles_tree;
         private FlowLayoutPanel pn_top;
-        private Button tools_btn_save;
+        private Button tools_btn_del;
         private Button tools_btn_new;
         private SplitContainer m_spc_center;
         private Panel m_pn_center;

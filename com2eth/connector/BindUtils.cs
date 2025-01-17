@@ -1,5 +1,6 @@
 ﻿using com2eth.serialport;
 using log4net;
+using NetCoreServer;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -30,7 +31,22 @@ namespace com2eth.connector
                 Bundles = null;
             }
             return Bundles;
-        }        
+        }
+        public static Bundles Tcp2ComTpl() {
+            Bundles bundles = new Bundles();
+            bundles.bundles = new List<EndpointMapper>();
+            EndpointMapper tcp_com = new EndpointMapper();
+            EndpointEntity tcp = new EndpointEntity();
+            
+            
+            EndpointEntity com = new EndpointEntity();
+
+            tcp_com.endpoint_a = tcp;
+            tcp_com.endpoint_b = com;
+            bundles.bundles.Add(tcp_com);
+
+            return bundles;
+        }
     }
     public class Bundles
     {
@@ -49,16 +65,31 @@ namespace com2eth.connector
         public string name { get; set; }
         public string desc { get; set; }
         public string type {  get; set; }
-        public string ip { get; set; } = "127.0.0.1";
+        // === TCP Server 参数 ===//
+        public string ip { get; set; }
+
         public int port {  get; set; }
+        public bool ShouldSerializeport() {
+            return (string.Equals("tcp_server", this.type));
+        }
+    
+        // === TCP Server 参数 ===//
 
         public string addr {  get; set; }
-        
+
+        // === 串口 参数 ===//
         public string com {  get; set; }
         public string parity {  get; set; }
         public int databits {  get; set; }
+        public bool ShouldSerializedatabits() {
+            return (string.Equals("serial_port", this.type));
+        }
         public int baudrate {  get; set; }
+        public bool ShouldSerializebaudrate() {
+            return (string.Equals("serial_port", this.type));
+        }
         public string stopbits {  get; set; }
+        // === 串口 参数 ===//
     }
     internal class StringEnum {
         internal static string GetStringValue(Enum em) {
@@ -79,6 +110,7 @@ namespace com2eth.connector
                 return EndpointType.TCP_SERVER;
             }
         }
+        
     }
     internal enum EndpointType
     {
@@ -94,5 +126,7 @@ namespace com2eth.connector
         public string Value {
             get { return _value; }
         }
+
     }
+    
 }

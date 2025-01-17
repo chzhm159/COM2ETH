@@ -17,17 +17,18 @@ namespace com2eth
 {
     public partial class Main : Form {
         private static readonly ILog log = LogManager.GetLogger(typeof(Main));
-        MainService mSvc;
+
         Tcp2Com tcp2com;
-        int maxLinds = 5;
+        int maxLinds = 1000;
         public Main() {
             InitializeComponent();
-            mSvc = new MainService(this);
+            MainService msi = MainService.Inst;
+            msi.SetMain(this);
+
             AppCfg appcfg = AppCfg.Inst;
+
             tcp2com = new Tcp2Com();
-            // RAL 5005. 0, 83, 135, #005387
-            // 
-            // 
+            // RAL 5005. 0, 83, 135, #005387            
         }
 
         internal void OnMsg(string msg) {
@@ -37,6 +38,7 @@ namespace com2eth
                 ShowMsg(msg);
             }
         }
+
         private void ShowMsg(string msg) {
             string text = string.Format("[{0}]: {1} \r\n", AppCfg.Now(), msg);
             app_msg.AppendText(text);
@@ -82,12 +84,14 @@ namespace com2eth
         }
 
         private void Main_Load(object sender, EventArgs e) {
-            mSvc.Load();
+            MainService msi = MainService.Inst;
+            msi.Load();
         }
 
         private void tools_btn_new_Click(object sender, EventArgs e) {
 
         }
+
         internal void UpdateBundles(Bundles bundles) {
             if (this.InvokeRequired) {
                 this.BeginInvoke(UpdateBundlesDelegate, bundles);
@@ -95,7 +99,7 @@ namespace com2eth
                 UpdateBundlesDelegate(bundles);
             }
         }
-        
+
         private void UpdateBundlesDelegate(Bundles bindMap) {
             if (bindMap == null || bindMap.bundles == null) {
                 log.Error("未能加载Bind信息!");
@@ -108,15 +112,28 @@ namespace com2eth
                 node.Tag = bind;
                 bundles_tree.Nodes.Add(node);
             });
-            if(bundles_tree.Nodes.Count > 0) {
+            if (bundles_tree.Nodes.Count > 0) {
                 TreeNode node = bundles_tree.Nodes[0];
                 bundles_tree.SelectedNode = node;
                 EndpointMapper? bm = node.Tag as EndpointMapper;
+
                 tcp2com.Dock = DockStyle.Fill;
-                tcp2com.Config(bm?.endpoint_a, bm?.endpoint_b);
+                tcp2com.Config(bm);
                 m_pn_center.Controls.Clear();
                 m_pn_center.Controls.Add(tcp2com);
-            }   
+            }
+        }
+
+        private void Main_FormClosing(object sender, FormClosingEventArgs e) {
+            DialogResult ret = MessageBox.Show("是否关闭程序?", "关闭", MessageBoxButtons.YesNo);
+            if (ret != DialogResult.Yes) {
+                e.Cancel = true;
+                return;
+            }
+        }
+
+        private void tools_btn_del_Click(object sender, EventArgs e) {
+
         }
     }
 }

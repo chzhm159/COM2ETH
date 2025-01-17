@@ -38,8 +38,8 @@
             m_spc_center = new SplitContainer();
             m_pn_center = new Panel();
             pn_top = new FlowLayoutPanel();
-            tools_btn_save = new Button();
             tools_btn_new = new Button();
+            tools_btn_save = new Button();
             app_menubar.SuspendLayout();
             pn_left.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)app_splitContainer).BeginInit();
@@ -171,6 +171,7 @@
             // 
             // pn_top
             // 
+            pn_top.BorderStyle = BorderStyle.FixedSingle;
             pn_top.Controls.Add(tools_btn_new);
             pn_top.Controls.Add(tools_btn_save);
             pn_top.Dock = DockStyle.Top;
@@ -179,15 +180,6 @@
             pn_top.Padding = new Padding(10, 3, 3, 3);
             pn_top.Size = new Size(1008, 40);
             pn_top.TabIndex = 4;
-            // 
-            // tools_btn_save
-            // 
-            tools_btn_save.Location = new Point(84, 6);
-            tools_btn_save.Name = "tools_btn_save";
-            tools_btn_save.Size = new Size(60, 30);
-            tools_btn_save.TabIndex = 0;
-            tools_btn_save.Text = "保存";
-            tools_btn_save.UseVisualStyleBackColor = true;
             // 
             // tools_btn_new
             // 
@@ -199,6 +191,15 @@
             tools_btn_new.Text = "新建";
             tools_btn_new.UseVisualStyleBackColor = true;
             tools_btn_new.Click += tools_btn_new_Click;
+            // 
+            // tools_btn_save
+            // 
+            tools_btn_save.Location = new Point(84, 6);
+            tools_btn_save.Name = "tools_btn_save";
+            tools_btn_save.Size = new Size(60, 30);
+            tools_btn_save.TabIndex = 0;
+            tools_btn_save.Text = "保存";
+            tools_btn_save.UseVisualStyleBackColor = true;
             // 
             // Main
             // 

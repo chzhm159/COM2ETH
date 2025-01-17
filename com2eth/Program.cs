@@ -7,6 +7,7 @@ using EthSerialPort.Codec;
 using log4net;
 using NetCoreServer;
 using System.Formats.Tar;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
